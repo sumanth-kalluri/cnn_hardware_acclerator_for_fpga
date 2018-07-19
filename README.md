@@ -13,7 +13,7 @@ Verification - Python 3.6 for scripting and Xilinx ISE 14.7 command line tools.
 2.	In the limited time available only the convolution and the max pooling operations which constitute majority of the computational workload in a CNN were implemented.
 3.	Fully parameterized Verilog templates were made for these layers so that custom layers could be synthesized for the CNN architecture of our choice by scaling these templates.
 
-CONVOLVER:
+**CONVOLVER:**
 This is the convolution unit of the design that computes the sliding window convolution in traditional CNNs given a particular kernel (weights matrix) and an input matrix.
 
 This unit is designed based on the streaming architecture wherein the input matrix (eg. an image in a vision based CNN task) is streamed pixel by pixel in succession into the unit with the kernel weights in place and after a few clock cycles the convolution output appears at the output.
@@ -26,17 +26,17 @@ This unit is designed based on the streaming architecture wherein the input matr
 
 ![convolver](https://user-images.githubusercontent.com/25367201/42937416-91ca9b4e-8b6c-11e8-99e7-0d1ebb9f06f4.jpg)
 
-### ADVANTAGES OF THIS ARCHITECTURE:
+**ADVANTAGES OF THIS ARCHITECTURE:**
 
 -	The input feature map has to be sent in only once (i.e the stored activations have to be accessed from the memory only once) thus greatly reducing the memory access time and the storage requirement.
 
 -	The convolution for any sized input can be calculated with this architecture without having to break the input or temporarily store it elsewhere due to low compute capability.
 
-KNOWN LIMITATIONS OF THE CONVOLVER:
+**KNOWN LIMITATIONS OF THE CONVOLVER:**
 
 -	This design assumes the value of the ‘Stride’ (the distance by which the convolution kernel moves during each sliding operation) to be equal to ‘One’. This is the case in the vast majority of CNN architectures and extremely few architectures exist with larger strides as it leads to aggressive downsampling.
 
-POOLER
+**POOLER**
  
 The pooler is the unit that computes max pooling operation on the output of the convolver. Since to output of the convolver is fed as input to the pooler, it follows a very similar architecture to the streaming architecture of the convolver.
 -	The dimensions of the input to the pooler are **M * M** (where **M = N-K+1**).
@@ -45,11 +45,12 @@ The pooler is the unit that computes max pooling operation on the output of the 
 
 ![pooler](https://user-images.githubusercontent.com/25367201/42937525-db3c845e-8b6c-11e8-937b-351a52e2056f.jpg)
 
-### ADVANTAGES OF THIS DESIGN:
+**ADVANTAGES OF THIS DESIGN:**
 -	The pooler follows the same streaming architecture of the convolver and does not require any modification of the convolver outputs. 
 -	Even this unit can be easily scaled for any input size and any pooling window size.
 -	Contributes to the overall pipelining architecture thus improving throughput.
-## KNOWN LIMITATIONS OF THE POOLER:
+
+**KNOWN LIMITATIONS OF THE POOLER:**
 1.	The design in its current state has not been made to handle the cases where M is not perfectly divisible by P since it would require zero padding of the input at the borders in order to make the pooling window fit perfectly on the input.
 2.	The functionality of the pooler has been formally verified only for the pooling window sizes  P = 2 and P = 3 (since they constitute virtually all of the pooling window sizes used in most of the neural networks) but the unit is expected to function fine for any value of P.
 3.	The current design assumes that the ‘stride’ of the pooling window (the distance the window moves horizontally during each sliding operation) is equal to the size of the window (this ensures that there is no overlap between two pooling neighbourhoods). This design currently cannot handle overlapping neighbourhoods.
