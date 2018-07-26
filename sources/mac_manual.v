@@ -5,6 +5,11 @@ module mac_manual(
     input [31:0] c,
     output reg [31:0] p
     );
+    wire [31:0] sum;
+    wire [31:0] m;
+
+qmult #(8,16) mul(a,b,m);
+qadd  #(16,32) add(m,c,sum);
  always@(posedge clk,posedge sclr)
  begin
  
@@ -14,7 +19,8 @@ module mac_manual(
  end
  else if(ce)
  begin
- p <= (a*b+c);
+p <= sum;
+ //p <= (a*b+c);
  end
  end
 endmodule
