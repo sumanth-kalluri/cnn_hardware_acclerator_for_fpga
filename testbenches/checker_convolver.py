@@ -37,29 +37,29 @@ for i in range(NoT):
 	print(fsize)
 	print(ksize)
 	print(conv)
-# 	file3.write(str(i)+"."+str(format(fsize[0],'03x'))+" "+str(format(ksize,'03x'))+'\n')
-# 	file4 = open("myproject.prj",'w')
-# 	file4.write("verilog work \"G:\\Xilinx design files\\acclerator\\convolver.v\""+"\n")
-# 	file4.write("verilog work \"G:\\Xilinx design files\\acclerator\\mac_manual.v\""+"\n")
-# 	file4.write("verilog work \"G:\\Xilinx design files\\acclerator\\convolver_tb2.v\""+"\n")
-# 	file4.write("verilog work \"C:\\Xilinx\\14.7\\ISE_DS\\ISE\\verilog\\src\\glbl.v\""+"\n")
-# 	file4.write("verilog work \"G:\\Xilinx design files\\acclerator\\ipcore_dir\\shift.v\"")
-# 	file4.close()
-# 	subprocess.call(["vlogcomp","-prj","myproject.prj"])
-# 	subprocess.call(["fuse","-L","unisims_ver","-L","unimacro_ver","-L","xilinxcorelib_ver","-L","secureip","-o","sim.exe","-prj","myproject.prj","work.glbl","work.convolver_tb2","-d","n=9'h"+str((format(fsize[0],'03x'))),"-d","k=9'h"+str((format(ksize,'03x'))),"-d","tn="+str(i),"-d","c_size="+str(math.ceil(math.log2(fsize[0]**2 + 20)))])
-# 	os.system("C:\\Xilinx\\14.7\\ISE_DS\\settings64.bat /wait sim.exe -tclbatch commands.tcl -intstyle silent && exit(0)")
-# file2.close()
-# file3.close()
-# import difflib
-# import sys
+	file3.write(str(i)+"."+str(format(fsize[0],'03x'))+" "+str(format(ksize,'03x'))+'\n')
+	file4 = open("myproject.prj",'w')
+	file4.write("verilog work \"G:\\Xilinx design files\\acclerator\\convolver.v\""+"\n")
+	file4.write("verilog work \"G:\\Xilinx design files\\acclerator\\mac_manual.v\""+"\n")
+	file4.write("verilog work \"G:\\Xilinx design files\\acclerator\\convolver_tb2.v\""+"\n")
+	file4.write("verilog work \"C:\\Xilinx\\14.7\\ISE_DS\\ISE\\verilog\\src\\glbl.v\""+"\n")
+	file4.write("verilog work \"G:\\Xilinx design files\\acclerator\\ipcore_dir\\shift.v\"")
+	file4.close()
+	subprocess.call(["vlogcomp","-prj","myproject.prj"])
+	subprocess.call(["fuse","-L","unisims_ver","-L","unimacro_ver","-L","xilinxcorelib_ver","-L","secureip","-o","sim.exe","-prj","myproject.prj","work.glbl","work.convolver_tb2","-d","n=9'h"+str((format(fsize[0],'03x'))),"-d","k=9'h"+str((format(ksize,'03x'))),"-d","tn="+str(i),"-d","c_size="+str(math.ceil(math.log2(fsize[0]**2 + 20)))])
+	os.system("C:\\Xilinx\\14.7\\ISE_DS\\settings64.bat /wait sim.exe -tclbatch commands.tcl -intstyle silent && exit(0)")
+file2.close()
+file3.close()
+import difflib
+import sys
 
-# with open('cr_op.txt', 'r') as hosts0:
-#     with open('tb_op.txt', 'r') as hosts1:
-#         diff = difflib.unified_diff(
-#             hosts0.readlines(),
-#             hosts1.readlines(),
-#             fromfile='op.txt',
-#             tofile='tb_op.txt',
-#         )
-#         for line in diff:
-#             sys.stdout.write(line)
+with open('cr_op.txt', 'r') as hosts0:
+    with open('tb_op.txt', 'r') as hosts1:
+        diff = difflib.unified_diff(
+            hosts0.readlines(),
+            hosts1.readlines(),
+            fromfile='op.txt',
+            tofile='tb_op.txt',
+        )
+        for line in diff:
+            sys.stdout.write(line)
