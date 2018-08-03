@@ -13,6 +13,7 @@ module acclerator(clk,ce,weight1,global_rst,activation,data_out,valid_op,end_op)
     wire [31:0] conv_op;
     wire valid_conv,end_conv;
     wire valid_ip;
+    wire relu_op;
     assign valid_ip = valid_conv&&(!end_conv);
         
     convolver #(n,k) conv(
@@ -25,9 +26,9 @@ module acclerator(clk,ce,weight1,global_rst,activation,data_out,valid_op,end_op)
             .end_conv(end_conv), 
             .valid_conv(valid_conv)
         );
+    relu act(conv_op,relu_op);
     
     
-    
-    pooler #((n-k+1),p) pool(clk,valid_ip,global_rst,conv_op,data_out,valid_op,end_op);
+    pooler #((n-k+1),p) pool(clk,valid_ip,global_rst,relu_op,data_out,valid_op,end_op);
     
 endmodule
