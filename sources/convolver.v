@@ -4,8 +4,9 @@ module convolver(clk,ce,weight1,global_rst,activation,conv_op,end_conv,valid_con
 
 `define UNPACK_ARRAY(PK_WIDTH,PK_LEN,PK_DEST,PK_SRC)  genvar unpk_idx;  for (unpk_idx=0; unpk_idx<(PK_LEN); unpk_idx=unpk_idx+1) begin; assign PK_DEST[unpk_idx][((PK_WIDTH)-1):0] = PK_SRC[((PK_WIDTH)*unpk_idx) +: PK_WIDTH]; end     
 
-parameter n = 9'h00a;
-parameter k = 9'h003;
+parameter n = 9'h00a;     // activation map size
+parameter k = 9'h003;     // kernel size 
+parameter s = 1;          //value of stride (horizontal and vertical stride are equal)
 input clk,ce,global_rst;
 input [15:0] activation;
 input wire [(k*k)*16-1:0] weight1;
@@ -76,24 +77,26 @@ end
 endgenerate
 
 
-reg [31:0] count,count2,count3;
-reg en1,en2;
+reg [31:0] count,count2,count3,row_count;
+reg en1,en2,en3;
 always@(posedge clk) begin
 
 
 if(global_rst)
 begin
-count <=0;
-count2<=0;
-count3<=0;
+count <=0;     //master counter: counts the clock cycles
+count2<=0;     //counts the valid convolution outputs
+count3<=0;     // counts the number of invalid onvolutions where the kernel wraps around the next row of inputs.
+row_count <= 0; //counts the number of rows of the output.
 en1<=0;
 en2<=1;
+en3<=0;
 end
 
 else if(ce)
 begin
 
-if(count == (k-1)*n+k-1)
+if(count == (k-1)*n+k-1)   // time taken for the pipeline to fill up is (k-1)*n+k-1
 begin
 en1 <= 1'b1;
 count <= count+1'b1;
@@ -108,13 +111,14 @@ end
 if(en1 && en2) begin
 
 if(count2 == n-k)
-begin 
-count2<=0;
-en2 <=0 ;
+begin
+count2 <= 0;
+en2 <= 0 ;
+row_count <= row_count + 1'b1;
 end
 
 else begin
-count2 <= count2+1'b1;
+count2 <= count2 + 1'b1;
 end
 
 end
@@ -127,10 +131,16 @@ end
 else
 count3 <= count3 + 1'b1;
 end
+
+if((((count2 + 1) % s == 0) && (row_count % s == 0))||(count3 == k-2)&&(row_count % s == 0)||(count == (k-1)*n+k-1)) begin   //one in every s convolutions becomes valid
+en3 <= 1;                                                                                                                    //some exceptional cases hadled for high when count2 = 0                
+end
+else 
+en3 <= 0;
 end
 
 assign end_conv = (count>= n*n+2)?1'b1:1'b0;
-assign valid_conv = (en1&&en2);
+assign valid_conv = (en1&&en2&&en3);
   
 
 endmodule
